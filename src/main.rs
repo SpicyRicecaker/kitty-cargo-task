@@ -233,11 +233,11 @@ fn main() {
     let cwd_current_tab = package.windows[package.i_current_window].cwd.clone();
     // dbg!(&package.windows);
     let id_window: isize = if let Some(id_window) = choose(package.i_current_window, package.windows) {
-        println!("focusing window {id_window}");
+        // println!("focusing window {id_window}");
         focus_window(id_window);
         id_window as isize
     } else {
-        println!("launching new tab");
+        // println!("launching new tab");
         // select window
         new_tab(&cwd_current_tab);
         -1 as isize
