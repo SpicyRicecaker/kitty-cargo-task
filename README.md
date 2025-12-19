@@ -40,8 +40,7 @@ or start `kitty` with:
 kitty -o allow_remote_control=yes
 ```
 
-
-## running
+then install this cli command
 
 ```shell
 git clone https://github.com/SpicyRicecaker/kitty-cargo-task.git
