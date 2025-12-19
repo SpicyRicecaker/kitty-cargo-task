@@ -220,27 +220,75 @@ fn focus_window(id: usize) {
     let output = Command::new("kitty").args(["@", "focus-window", "-m", &format!("id:{id}")]).output().expect("failed to focus tab");
 }
 
-fn new_tab(cwd: &str) {
-    let output = Command::new("kitty").args(["@", "launch", "--hold=true", "--type=tab", "--cwd", cwd]).output().expect("failed to launch tab");
+fn new_tab(cwd: &str, dont_take_focus: bool) {
+    let mut args = vec!["@", "launch", "--hold=true", "--type=tab", "--cwd", cwd];
+    if dont_take_focus {
+        args.push("--dont-take-focus");
+    }
+    let output = Command::new("kitty").args(args).output().expect("failed to launch tab");
 }
 
 fn cargo(id: isize) {
     let output = Command::new("kitty").args(["@", "send-text", "-m", &format!("id:{id}"), "cargo run\\r"]).output().expect("failed to run cargo");
 }
 
+struct Flags {
+    dont_take_focus: bool,
+    jump_back: bool
+}
+
+impl Flags {
+    fn new() -> Self {
+        let mut args = std::env::args().into_iter();
+        args.next();
+        
+        let mut dont_take_focus = false;
+        let mut jump_back = false;
+
+        while let Some(arg) = args.next() {
+            match arg.as_str() {
+                "--dont-take-focus" => {
+                    dont_take_focus = true;
+                }
+                "--jump-back" => {
+                    jump_back = true;
+                }
+                s => {
+                    println!("option {s} not recognized");
+                }
+            }
+        }
+        
+        Self {
+            dont_take_focus,
+            jump_back
+        }
+    }
+}
+
 fn main() {
+
     let package = process();
     let cwd_current_tab = package.windows[package.i_current_window].cwd.clone();
+    let id_window_current = package.windows[package.i_current_window].id;
     // dbg!(&package.windows);
-    let id_window: isize = if let Some(id_window) = choose(package.i_current_window, package.windows) {
-        // println!("focusing window {id_window}");
-        focus_window(id_window);
+
+    let flags = Flags::new();
+    
+    let id_window_runner: isize = if let Some(id_window) = choose(package.i_current_window, package.windows) {
+        // println!("dont_take_focusing window {id_window_runner}");
+        if !flags.dont_take_focus {
+            focus_window(id_window);
+        }
         id_window as isize
     } else {
         // println!("launching new tab");
         // select window
-        new_tab(&cwd_current_tab);
+        new_tab(&cwd_current_tab, flags.dont_take_focus);
         -1 as isize
     };
-    cargo(id_window);
+    cargo(id_window_runner);
+    if flags.jump_back {
+        focus_window(id_window_current);
+    }
 }

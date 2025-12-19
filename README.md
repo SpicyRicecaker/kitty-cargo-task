@@ -4,6 +4,14 @@ Simple cli command that when run, picks the closest kitty tab to the right (or w
 
 I created this command to solve the problem of wanting to be able to "with the lowest possible friction run the current rust project, But, try to recycle terminal tabs whenever possible and keep the terminal around so I can run git and regular console commands in the new tab.".
 
+## flags
+
+```txt
+--dont-take-focus 
+    do not focus task runner tab
+```
+
+
 ## currently supported terminals & shells
 
 terminals
