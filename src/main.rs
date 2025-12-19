@@ -25,7 +25,8 @@ fn process() -> Package { let output = Command::new("kitty").args(["@", "ls"]).o
                         // dbg!(foreground_process["cmdline"].as_array().unwrap());
                         // only add zsh windows as jump options
                         for cmd in foreground_process["cmdline"].as_array().unwrap().iter() {
-                            if cmd.as_str().unwrap().contains("zsh") {
+                            let cmd = cmd.as_str().unwrap();
+                            if ["zsh", "bash", "fish", "sh", "nu", "ksh"].iter().any(|shell| cmd.contains(shell)) {
                                 // dbg!("gg contains");
                                 windows.push(WindowA { id: window["id"].as_u64().unwrap() as usize, cwd: foreground_process["cwd"].as_str().unwrap().into() }); // use foreground over window cwd
                                 continue 'a;
