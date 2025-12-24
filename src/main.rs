@@ -6,7 +6,8 @@ struct Package {
     i_current_window: usize,
     windows: Vec<WindowA>
 }
-fn process() -> Package { let output = Command::new("kitty").args(["@", "ls"]).output().expect("failed to run kitty");
+
+fn get_windows_a() -> Package { let output = Command::new("kitty").args(["@", "ls"]).output().expect("failed to run kitty");
     let kitty_ls = str::from_utf8(&output.stdout).unwrap();
     let screens: Value = serde_json::from_str(kitty_ls).expect("failed to parse");
     // dbg!(&v);
@@ -58,6 +59,12 @@ struct WindowB {
     dist: usize,
     cwd: String,
 }
+
+// find index of right window rel to self (if any)
+// dx = take (length - 1 + 1) - index of right window to find num spaces we need to move new window
+//      or 0 if no space
+// create new window
+// move window back by dx indices
 
 fn choose(i_current_window: usize, windows: Vec<WindowA>) -> Option<usize> {
     let (current_window_id, current_window_cwd) = {
@@ -216,6 +223,10 @@ fn test5() {
     assert_eq!(choose(i_current_window, windows).unwrap(), 0);
 }
 
+#[test]
+fn test_open_right() {
+}
+
 fn focus_window(id: usize) {
     let output = Command::new("kitty").args(["@", "focus-window", "-m", &format!("id:{id}")]).output().expect("failed to focus tab");
 }
@@ -268,7 +279,7 @@ impl Flags {
 
 fn main() {
 
-    let package = process();
+    let package = get_windows_a();
     let cwd_current_tab = package.windows[package.i_current_window].cwd.clone();
     let id_window_current = package.windows[package.i_current_window].id;
     // dbg!(&package.windows);
