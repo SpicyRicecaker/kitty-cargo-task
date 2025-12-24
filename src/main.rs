@@ -1,13 +1,17 @@
-use std::{process::Command, thread::sleep, time::Duration};
 use serde_json::{Result, Value};
+use std::{process::Command, thread::sleep, time::Duration};
 
 #[derive(Debug)]
 struct Package {
     i_current_window: usize,
-    windows: Vec<WindowA>
+    windows: Vec<WindowA>,
 }
 
-fn get_kitty_windows_a() -> Package { let output = Command::new("kitty").args(["@", "ls"]).output().expect("failed to run kitty");
+fn get_kitty_windows_a() -> Package {
+    let output = Command::new("kitty")
+        .args(["@", "ls"])
+        .output()
+        .expect("failed to run kitty");
     let kitty_ls = str::from_utf8(&output.stdout).unwrap();
     let screens: Value = serde_json::from_str(kitty_ls).expect("failed to parse");
     // dbg!(&v);
@@ -17,9 +21,13 @@ fn get_kitty_windows_a() -> Package { let output = Command::new("kitty").args(["
     for screen in screens.as_array().unwrap().iter() {
         for tab in screen["tabs"].as_array().unwrap().iter() {
             'a: for window in tab["windows"].as_array().unwrap().iter() {
-                for foreground_process in window["foreground_processes"].as_array().unwrap().iter() {
+                for foreground_process in window["foreground_processes"].as_array().unwrap().iter()
+                {
                     if window["is_self"].as_bool().unwrap() {
-                        windows.push(WindowA { id: window["id"].as_u64().unwrap() as usize, cwd: foreground_process["cwd"].as_str().unwrap().into() }); // use foreground over window cwd
+                        windows.push(WindowA {
+                            id: window["id"].as_u64().unwrap() as usize,
+                            cwd: foreground_process["cwd"].as_str().unwrap().into(),
+                        }); // use foreground over window cwd
                         i_current_window = Some(windows.len() - 1);
                         continue 'a;
                     } else {
@@ -27,9 +35,15 @@ fn get_kitty_windows_a() -> Package { let output = Command::new("kitty").args(["
                         // only add zsh windows as jump options
                         for cmd in foreground_process["cmdline"].as_array().unwrap().iter() {
                             let cmd = cmd.as_str().unwrap();
-                            if ["zsh", "bash", "fish", "sh", "nu", "ksh"].iter().any(|shell| cmd.contains(shell)) {
+                            if ["zsh", "bash", "fish", "sh", "nu", "ksh"]
+                                .iter()
+                                .any(|shell| cmd.contains(shell))
+                            {
                                 // dbg!("gg contains");
-                                windows.push(WindowA { id: window["id"].as_u64().unwrap() as usize, cwd: foreground_process["cwd"].as_str().unwrap().into() }); // use foreground over window cwd
+                                windows.push(WindowA {
+                                    id: window["id"].as_u64().unwrap() as usize,
+                                    cwd: foreground_process["cwd"].as_str().unwrap().into(),
+                                }); // use foreground over window cwd
                                 continue 'a;
                             }
                         }
@@ -43,7 +57,7 @@ fn get_kitty_windows_a() -> Package { let output = Command::new("kitty").args(["
 
     Package {
         i_current_window: i_current_window.unwrap(),
-        windows
+        windows,
     }
 }
 
@@ -65,8 +79,80 @@ struct WindowB {
 //      or 0 if no space
 // create new window
 // move window back by dx indices
+fn get_needed_dx_new_tab_to_right_of_current_tab(
+    i_current_window: usize,
+    windows: Vec<WindowA>,
+) -> usize {
+    let window_right = windows.get(i_current_window + 1);
 
-fn get_i_closest_window_with_cwd(i_current_window: usize, windows: Vec<WindowA>) -> Option<usize> {
+    if let Some(WindowA { id, .. }) = window_right {
+        windows.len() - id
+    } else {
+        0
+    }
+}
+
+#[cfg(test)]
+mod test_get_needed_dx_new_tab_to_right_of_current_tab {
+    use super::*;
+    #[test]
+    fn test1() {
+        let i_current_window = 0;
+        let windows = vec![
+            WindowA {
+                id: 0,
+                cwd: "cargo".into(),
+            },
+            WindowA {
+                id: 1,
+                cwd: "cargo".into(),
+            },
+        ];
+
+        let dx = get_needed_dx_new_tab_to_right_of_current_tab(i_current_window, windows);
+        assert_eq!(dx, 1);
+    }
+
+    #[test]
+    fn test2() {
+        let i_current_window = 1;
+        let windows = vec![
+            WindowA {
+                id: 0,
+                cwd: "cargo".into(),
+            },
+            WindowA {
+                id: 1, // <---------
+                cwd: "cargo".into(),
+            },
+            WindowA {
+                id: 2,
+                cwd: "cargo".into(),
+            },
+            WindowA {
+                id: 3,
+                cwd: "cargo".into(),
+            },
+        ];
+
+        let dx = get_needed_dx_new_tab_to_right_of_current_tab(i_current_window, windows);
+        assert_eq!(dx, 2);
+    }
+
+    #[test]
+    fn test3() {
+        let i_current_window = 0;
+        let windows = vec![WindowA {
+            id: 0, // <---------
+            cwd: "cargo".into(),
+        }];
+
+        let dx = get_needed_dx_new_tab_to_right_of_current_tab(i_current_window, windows);
+        assert_eq!(dx, 0);
+    }
+}
+
+fn get_id_closest_window_with_cwd(i_current_window: usize, windows: Vec<WindowA>) -> Option<usize> {
     let (current_window_id, current_window_cwd) = {
         let t = &windows[i_current_window];
         (t.id, t.cwd.clone())
@@ -121,114 +207,133 @@ fn get_i_closest_window_with_cwd(i_current_window: usize, windows: Vec<WindowA>)
     }
 }
 
-#[test]
-fn test1() {
-    let i_current_window = 0;
-    let windows = vec![
-        WindowA {
+#[cfg(test)]
+mod test_get_id_closest_window_with_cwd {
+    use super::*;
+
+    #[test]
+    fn test1() {
+        let i_current_window = 0;
+        let windows = vec![
+            WindowA {
+                id: 0,
+                cwd: "cargo".into(),
+            },
+            WindowA {
+                id: 1,
+                cwd: "cargo".into(),
+            },
+        ];
+        assert_eq!(
+            get_id_closest_window_with_cwd(i_current_window, windows).unwrap(),
+            1
+        );
+    }
+
+    #[test]
+    fn test2() {
+        let i_current_window = 0;
+        let windows = vec![WindowA {
             id: 0,
             cwd: "cargo".into(),
-        },
-        WindowA {
-            id: 1,
-            cwd: "cargo".into(),
-        },
-    ];
-    assert_eq!(get_i_closest_window_with_cwd(i_current_window, windows).unwrap(), 1);
-}
+        }];
+        assert_eq!(
+            get_id_closest_window_with_cwd(i_current_window, windows),
+            None
+        );
+    }
 
-#[test]
-fn test2() {
-    let i_current_window = 0;
-    let windows = vec![WindowA {
-        id: 0,
-        cwd: "cargo".into(),
-    }];
-    assert_eq!(get_i_closest_window_with_cwd(i_current_window, windows), None);
-}
+    #[test]
+    fn test3() {
+        let i_current_window = 1;
+        let windows = vec![
+            WindowA {
+                id: 0,
+                cwd: "cargo".into(),
+            },
+            WindowA {
+                id: 1,
+                cwd: "cargo".into(),
+            },
+            WindowA {
+                id: 2,
+                cwd: "cargo".into(),
+            },
+            WindowA {
+                id: 3,
+                cwd: "cargo".into(),
+            },
+        ];
+        assert_eq!(
+            get_id_closest_window_with_cwd(i_current_window, windows).unwrap(),
+            2
+        );
+    }
 
-#[test]
-fn test3() {
-    let i_current_window = 1;
-    let windows = vec![
-        WindowA {
-            id: 0,
-            cwd: "cargo".into(),
-        },
-        WindowA {
-            id: 1,
-            cwd: "cargo".into(),
-        },
-        WindowA {
-            id: 2,
-            cwd: "cargo".into(),
-        },
-        WindowA {
-            id: 3,
-            cwd: "cargo".into(),
-        },
-    ];
-    assert_eq!(get_i_closest_window_with_cwd(i_current_window, windows).unwrap(), 2);
-}
+    #[test]
+    fn test4() {
+        let i_current_window = 1;
+        let windows = vec![
+            WindowA {
+                id: 0,
+                cwd: "cargo".into(),
+            },
+            WindowA {
+                id: 1,
+                cwd: "cargo".into(),
+            },
+            WindowA {
+                id: 2,
+                cwd: "lol".into(),
+            },
+            WindowA {
+                id: 3,
+                cwd: "cargo".into(),
+            },
+        ];
+        assert_eq!(
+            get_id_closest_window_with_cwd(i_current_window, windows).unwrap(),
+            3
+        );
+    }
 
-#[test]
-fn test4() {
-    let i_current_window = 1;
-    let windows = vec![
-        WindowA {
-            id: 0,
-            cwd: "cargo".into(),
-        },
-        WindowA {
-            id: 1,
-            cwd: "cargo".into(),
-        },
-        WindowA {
-            id: 2,
-            cwd: "lol".into(),
-        },
-        WindowA {
-            id: 3,
-            cwd: "cargo".into(),
-        },
-    ];
-    assert_eq!(get_i_closest_window_with_cwd(i_current_window, windows).unwrap(), 3);
-}
-
-#[test]
-fn test5() {
-    let i_current_window = 2;
-    let windows = vec![
-        WindowA {
-            id: 0,
-            cwd: "cargo".into(),
-        },
-        WindowA {
-            id: 1,
-            cwd: "lol".into(),
-        },
-        WindowA {
-            id: 2,
-            cwd: "cargo".into(),
-        },
-        WindowA {
-            id: 2,
-            cwd: "lol".into(),
-        },
-        WindowA {
-            id: 3,
-            cwd: "lol".into(),
-        },
-    ];
-    assert_eq!(get_i_closest_window_with_cwd(i_current_window, windows).unwrap(), 0);
-}
-
-#[test]
-fn test_open_right() {
+    #[test]
+    fn test5() {
+        let i_current_window = 2;
+        let windows = vec![
+            WindowA {
+                id: 0,
+                cwd: "cargo".into(),
+            },
+            WindowA {
+                id: 1,
+                cwd: "lol".into(),
+            },
+            WindowA {
+                id: 2,
+                cwd: "cargo".into(),
+            },
+            WindowA {
+                id: 2,
+                cwd: "lol".into(),
+            },
+            WindowA {
+                id: 3,
+                cwd: "lol".into(),
+            },
+        ];
+        assert_eq!(
+            get_id_closest_window_with_cwd(i_current_window, windows).unwrap(),
+            0
+        );
+    }
 }
 
 fn focus_window(id: usize) {
-    let output = Command::new("kitty").args(["@", "focus-window", "-m", &format!("id:{id}")]).output().expect("failed to focus tab");
+    let output = Command::new("kitty")
+        .args(["@", "focus-window", "-m", &format!("id:{id}")])
+        .output()
+        .expect("failed to focus tab");
 }
 
 fn new_tab(cwd: &str, dont_take_focus: bool) {
@@ -236,23 +341,29 @@ fn new_tab(cwd: &str, dont_take_focus: bool) {
     if dont_take_focus {
         args.push("--dont-take-focus");
     }
-    let output = Command::new("kitty").args(args).output().expect("failed to launch tab");
+    let output = Command::new("kitty")
+        .args(args)
+        .output()
+        .expect("failed to launch tab");
 }
 
 fn cargo(id: isize) {
-    let output = Command::new("kitty").args(["@", "send-text", "-m", &format!("id:{id}"), "cargo run\\r"]).output().expect("failed to run cargo");
+    let output = Command::new("kitty")
+        .args(["@", "send-text", "-m", &format!("id:{id}"), "cargo run\\r"])
+        .output()
+        .expect("failed to run cargo");
 }
 
 struct Flags {
     dont_take_focus: bool,
-    jump_back: bool
+    jump_back: bool,
 }
 
 impl Flags {
     fn new() -> Self {
         let mut args = std::env::args().into_iter();
         args.next();
-        
+
         let mut dont_take_focus = false;
         let mut jump_back = false;
 
@@ -269,24 +380,25 @@ impl Flags {
                 }
             }
         }
-        
+
         Self {
             dont_take_focus,
-            jump_back
+            jump_back,
         }
     }
 }
 
 fn main() {
-
     let package = get_kitty_windows_a();
     let cwd_current_tab = package.windows[package.i_current_window].cwd.clone();
     let id_window_current = package.windows[package.i_current_window].id;
     // dbg!(&package.windows);
 
     let flags = Flags::new();
-    
-    let id_window_runner: isize = if let Some(id_window) = get_i_closest_window_with_cwd(package.i_current_window, package.windows) {
+
+    let id_window_runner: isize = if let Some(id_window) =
+        get_id_closest_window_with_cwd(package.i_current_window, package.windows)
+    {
         // println!("dont_take_focusing window {id_window_runner}");
         if !flags.dont_take_focus {
             focus_window(id_window);
