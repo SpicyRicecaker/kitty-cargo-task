@@ -7,7 +7,7 @@ struct Package {
     windows: Vec<WindowA>
 }
 
-fn get_windows_a() -> Package { let output = Command::new("kitty").args(["@", "ls"]).output().expect("failed to run kitty");
+fn get_kitty_windows_a() -> Package { let output = Command::new("kitty").args(["@", "ls"]).output().expect("failed to run kitty");
     let kitty_ls = str::from_utf8(&output.stdout).unwrap();
     let screens: Value = serde_json::from_str(kitty_ls).expect("failed to parse");
     // dbg!(&v);
@@ -66,7 +66,7 @@ struct WindowB {
 // create new window
 // move window back by dx indices
 
-fn choose(i_current_window: usize, windows: Vec<WindowA>) -> Option<usize> {
+fn get_i_closest_window_with_cwd(i_current_window: usize, windows: Vec<WindowA>) -> Option<usize> {
     let (current_window_id, current_window_cwd) = {
         let t = &windows[i_current_window];
         (t.id, t.cwd.clone())
@@ -134,7 +134,7 @@ fn test1() {
             cwd: "cargo".into(),
         },
     ];
-    assert_eq!(choose(i_current_window, windows).unwrap(), 1);
+    assert_eq!(get_i_closest_window_with_cwd(i_current_window, windows).unwrap(), 1);
 }
 
 #[test]
@@ -144,7 +144,7 @@ fn test2() {
         id: 0,
         cwd: "cargo".into(),
     }];
-    assert_eq!(choose(i_current_window, windows), None);
+    assert_eq!(get_i_closest_window_with_cwd(i_current_window, windows), None);
 }
 
 #[test]
@@ -168,7 +168,7 @@ fn test3() {
             cwd: "cargo".into(),
         },
     ];
-    assert_eq!(choose(i_current_window, windows).unwrap(), 2);
+    assert_eq!(get_i_closest_window_with_cwd(i_current_window, windows).unwrap(), 2);
 }
 
 #[test]
@@ -192,7 +192,7 @@ fn test4() {
             cwd: "cargo".into(),
         },
     ];
-    assert_eq!(choose(i_current_window, windows).unwrap(), 3);
+    assert_eq!(get_i_closest_window_with_cwd(i_current_window, windows).unwrap(), 3);
 }
 
 #[test]
@@ -220,7 +220,7 @@ fn test5() {
             cwd: "lol".into(),
         },
     ];
-    assert_eq!(choose(i_current_window, windows).unwrap(), 0);
+    assert_eq!(get_i_closest_window_with_cwd(i_current_window, windows).unwrap(), 0);
 }
 
 #[test]
@@ -279,14 +279,14 @@ impl Flags {
 
 fn main() {
 
-    let package = get_windows_a();
+    let package = get_kitty_windows_a();
     let cwd_current_tab = package.windows[package.i_current_window].cwd.clone();
     let id_window_current = package.windows[package.i_current_window].id;
     // dbg!(&package.windows);
 
     let flags = Flags::new();
     
-    let id_window_runner: isize = if let Some(id_window) = choose(package.i_current_window, package.windows) {
+    let id_window_runner: isize = if let Some(id_window) = get_i_closest_window_with_cwd(package.i_current_window, package.windows) {
         // println!("dont_take_focusing window {id_window_runner}");
         if !flags.dont_take_focus {
             focus_window(id_window);
