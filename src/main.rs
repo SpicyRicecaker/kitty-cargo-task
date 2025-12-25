@@ -1,5 +1,6 @@
 use serde_json::{Result, Value};
 use std::{process::Command, thread::sleep, time::Duration};
+use clap::Parser;
 
 #[derive(Debug)]
 struct Package {
@@ -7,7 +8,7 @@ struct Package {
     windows: Vec<WindowA>,
 }
 
-fn get_kitty_windows_package() -> Package {
+fn kitty_get_windows_package() -> Package {
     let output = Command::new("kitty")
         .args(["@", "ls"])
         .output()
@@ -80,7 +81,7 @@ struct WindowB {
 // create new window
 // move window back by dx indices
 fn new_tab_adjacent() {
-    let package = get_kitty_windows_package();
+    let package = kitty_get_windows_package();
 
     let current_window_cwd = {
         let t = &package.windows[package.i_current_window];
@@ -163,7 +164,7 @@ mod test_get_needed_dx_new_tab_to_right_of_current_tab {
     }
 }
 
-fn get_id_closest_window_with_cwd(i_current_window: usize, windows: Vec<WindowA>) -> Option<usize> {
+fn kitty_get_id_closest_window_with_cwd(i_current_window: usize, windows: Vec<WindowA>) -> Option<usize> {
     let (current_window_id, current_window_cwd) = {
         let t = &windows[i_current_window];
         (t.id, t.cwd.clone())
@@ -236,7 +237,7 @@ mod test_get_id_closest_window_with_cwd {
             },
         ];
         assert_eq!(
-            get_id_closest_window_with_cwd(i_current_window, windows).unwrap(),
+            kitty_get_id_closest_window_with_cwd(i_current_window, windows).unwrap(),
             1
         );
     }
@@ -249,7 +250,7 @@ mod test_get_id_closest_window_with_cwd {
             cwd: "cargo".into(),
         }];
         assert_eq!(
-            get_id_closest_window_with_cwd(i_current_window, windows),
+            kitty_get_id_closest_window_with_cwd(i_current_window, windows),
             None
         );
     }
@@ -276,7 +277,7 @@ mod test_get_id_closest_window_with_cwd {
             },
         ];
         assert_eq!(
-            get_id_closest_window_with_cwd(i_current_window, windows).unwrap(),
+            kitty_get_id_closest_window_with_cwd(i_current_window, windows).unwrap(),
             2
         );
     }
@@ -303,7 +304,7 @@ mod test_get_id_closest_window_with_cwd {
             },
         ];
         assert_eq!(
-            get_id_closest_window_with_cwd(i_current_window, windows).unwrap(),
+            kitty_get_id_closest_window_with_cwd(i_current_window, windows).unwrap(),
             3
         );
     }
@@ -334,20 +335,20 @@ mod test_get_id_closest_window_with_cwd {
             },
         ];
         assert_eq!(
-            get_id_closest_window_with_cwd(i_current_window, windows).unwrap(),
+            kitty_get_id_closest_window_with_cwd(i_current_window, windows).unwrap(),
             0
         );
     }
 }
 
-fn focus_window(id: usize) {
+fn kitty_focus_window(id: usize) {
     let output = Command::new("kitty")
         .args(["@", "focus-window", "-m", &format!("id:{id}")])
         .output()
         .expect("failed to focus tab");
 }
 
-fn new_tab(cwd: &str, dont_take_focus: bool) {
+fn kitty_new_tab(cwd: &str, dont_take_focus: bool) {
     let mut args = vec!["@", "launch", "--hold=true", "--type=tab", "--cwd", cwd];
     if dont_take_focus {
         args.push("--dont-take-focus");
@@ -365,69 +366,52 @@ fn kitty_send_cmd(id: isize, cmd: &str) {
         .expect("failed to run cargo");
 }
 
+
+#[derive(Parser, Debug)]
+#[command(version, about, long_about = None)]
 struct Flags {
+    /// whether or not to focus the new tab
+    #[arg(short, long)]
     dont_take_focus: bool,
+    /// whether or not to focus new tab
+    #[arg(short, long)]
     jump_back: bool,
+    /// whether or not to open tab to the right next to the currently focused tab (if applicable)
+    #[arg(short, long)]
+    adjacent: bool,
+    /// command, if any, to run in the new tab
+    #[arg(short, long)]
     command: Option<String>
 }
 
-impl Flags {
-    fn new() -> Self {
-        let mut args = std::env::args().into_iter();
-        args.next();
-
-        let mut dont_take_focus = false;
-        let mut jump_back = false;
-        let mut command = None;
-
-        while let Some(arg) = args.next() {
-            match arg.as_str() {
-                "--dont-take-focus" => {
-                    dont_take_focus = true;
-                }
-                "--jump-back" => {
-                    jump_back = true;
-                }
-                s => {
-                    command = Some(s.into());
-                }
-            }
-        }
-
-        Self {
-            dont_take_focus,
-            jump_back,
-            command
-        }
-    }
-}
-
 fn main() {
-    let package = get_kitty_windows_package();
+    let package = kitty_get_windows_package();
     let cwd_current_tab = package.windows[package.i_current_window].cwd.clone();
     let id_window_current = package.windows[package.i_current_window].id;
     // dbg!(&package.windows);
 
-    let flags = Flags::new();
+    let flags = Flags::parse();
 
     let id_window_runner: isize = if let Some(id_window) =
-        get_id_closest_window_with_cwd(package.i_current_window, package.windows)
+        kitty_get_id_closest_window_with_cwd(package.i_current_window, package.windows)
     {
         // println!("dont_take_focusing window {id_window_runner}");
         if !flags.dont_take_focus {
-            focus_window(id_window);
+            kitty_focus_window(id_window);
         }
         id_window as isize
     } else {
         // println!("launching new tab");
         // select window
-        new_tab(&cwd_current_tab, flags.dont_take_focus);
+        kitty_new_tab(&cwd_current_tab, flags.dont_take_focus);
         -1 as isize
     };
     if let Some(cmd) = flags.command {
         kitty_send_cmd(id_window_runner, &cmd);
     }
+    if flags.adjacent {
+    }
     if flags.jump_back {
-        focus_window(id_window_current);
+        kitty_focus_window(id_window_current);
     }
 }
