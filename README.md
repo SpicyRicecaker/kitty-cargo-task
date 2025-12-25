@@ -28,6 +28,8 @@ shells
 ```lua
 -- in some lua file
 vim.keymap.set('n', '67', function () vim.fn.system("kitty-cargo-task") end)
+vim.keymap.set('n', '45', function () vim.fn.system("kitty-cargo-task --dont-take-focus") end)
+
 ```
 
 ## setup
