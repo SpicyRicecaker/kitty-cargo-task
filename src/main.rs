@@ -7,7 +7,7 @@ struct Package {
     windows: Vec<WindowA>,
 }
 
-fn get_kitty_windows_a() -> Package {
+fn get_kitty_windows_package() -> Package {
     let output = Command::new("kitty")
         .args(["@", "ls"])
         .output()
@@ -79,6 +79,17 @@ struct WindowB {
 //      or 0 if no space
 // create new window
 // move window back by dx indices
+fn new_tab_adjacent() {
+    let package = get_kitty_windows_package();
+
+    let current_window_cwd = {
+        let t = &package.windows[package.i_current_window];
+        t.cwd.clone()
+    };
+
+    let dx = get_needed_dx_new_tab_to_right_of_current_tab(package.i_current_window, package.windows);
+}
+
 fn get_needed_dx_new_tab_to_right_of_current_tab(
     i_current_window: usize,
     windows: Vec<WindowA>,
@@ -347,9 +358,9 @@ fn new_tab(cwd: &str, dont_take_focus: bool) {
         .expect("failed to launch tab");
 }
 
-fn cargo(id: isize) {
+fn kitty_send_cmd(id: isize, cmd: &str) {
     let output = Command::new("kitty")
-        .args(["@", "send-text", "-m", &format!("id:{id}"), "cargo run\\r"])
+        .args(["@", "send-text", "-m", &format!("id:{id}"), &format!("{cmd}\\r")])
         .output()
         .expect("failed to run cargo");
 }
@@ -357,6 +368,7 @@ fn cargo(id: isize) {
 struct Flags {
     dont_take_focus: bool,
     jump_back: bool,
+    command: Option<String>
 }
 
 impl Flags {
@@ -366,6 +378,7 @@ impl Flags {
 
         let mut dont_take_focus = false;
         let mut jump_back = false;
+        let mut command = None;
 
         while let Some(arg) = args.next() {
             match arg.as_str() {
@@ -376,7 +389,7 @@ impl Flags {
                     jump_back = true;
                 }
                 s => {
-                    println!("option {s} not recognized");
+                    command = Some(s.into());
                 }
             }
         }
@@ -384,12 +397,13 @@ impl Flags {
         Self {
             dont_take_focus,
             jump_back,
+            command
         }
     }
 }
 
 fn main() {
-    let package = get_kitty_windows_a();
+    let package = get_kitty_windows_package();
     let cwd_current_tab = package.windows[package.i_current_window].cwd.clone();
     let id_window_current = package.windows[package.i_current_window].id;
     // dbg!(&package.windows);
@@ -410,7 +424,9 @@ fn main() {
         new_tab(&cwd_current_tab, flags.dont_take_focus);
         -1 as isize
     };
-    cargo(id_window_runner);
+    if let Some(cmd) = flags.command {
+        kitty_send_cmd(id_window_runner, &cmd);
+    }
     if flags.jump_back {
         focus_window(id_window_current);
     }
