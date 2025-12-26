@@ -62,13 +62,13 @@ fn kitty_get_windows_package() -> Package {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 struct WindowA {
     id: usize,
     cwd: String,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 struct WindowB {
     id: usize,
     dist: usize,
@@ -80,25 +80,14 @@ struct WindowB {
 //      or 0 if no space
 // create new window
 // move window back by dx indices
-fn new_tab_adjacent() {
-    let package = kitty_get_windows_package();
-
-    let current_window_cwd = {
-        let t = &package.windows[package.i_current_window];
-        t.cwd.clone()
-    };
-
-    let dx = get_needed_dx_new_tab_to_right_of_current_tab(package.i_current_window, package.windows);
-}
-
-fn get_needed_dx_new_tab_to_right_of_current_tab(
+fn kitty_get_needed_dx_new_tab_to_right_of_current_tab(
     i_current_window: usize,
-    windows: Vec<WindowA>,
+    windows: &[WindowA],
 ) -> usize {
     let window_right = windows.get(i_current_window + 1);
 
-    if let Some(WindowA { id, .. }) = window_right {
-        windows.len() - id
+    if window_right.is_some() {
+        windows.len() - (i_current_window + 1)
     } else {
         0
     }
@@ -121,7 +110,7 @@ mod test_get_needed_dx_new_tab_to_right_of_current_tab {
             },
         ];
 
-        let dx = get_needed_dx_new_tab_to_right_of_current_tab(i_current_window, windows);
+        let dx = kitty_get_needed_dx_new_tab_to_right_of_current_tab(i_current_window, &windows);
         assert_eq!(dx, 1);
     }
 
@@ -147,7 +136,7 @@ mod test_get_needed_dx_new_tab_to_right_of_current_tab {
             },
         ];
 
-        let dx = get_needed_dx_new_tab_to_right_of_current_tab(i_current_window, windows);
+        let dx = kitty_get_needed_dx_new_tab_to_right_of_current_tab(i_current_window, &windows);
         assert_eq!(dx, 2);
     }
 
@@ -159,12 +148,38 @@ mod test_get_needed_dx_new_tab_to_right_of_current_tab {
             cwd: "cargo".into(),
         }];
 
-        let dx = get_needed_dx_new_tab_to_right_of_current_tab(i_current_window, windows);
+        let dx = kitty_get_needed_dx_new_tab_to_right_of_current_tab(i_current_window, &windows);
         assert_eq!(dx, 0);
+    }
+
+    #[test]
+    fn test_random_id() {
+        let i_current_window = 1;
+        let windows = vec![
+            WindowA {
+                id: 99,
+                cwd: "cargo".into(),
+            },
+            WindowA {
+                id: 420, // <---------
+                cwd: "cargo".into(),
+            },
+            WindowA {
+                id: 69,
+                cwd: "cargo".into(),
+            },
+            WindowA {
+                id: 67,
+                cwd: "cargo".into(),
+            },
+        ];
+
+        let dx = kitty_get_needed_dx_new_tab_to_right_of_current_tab(i_current_window, &windows);
+        assert_eq!(dx, 2);
     }
 }
 
-fn kitty_get_id_closest_window_with_cwd(i_current_window: usize, windows: Vec<WindowA>) -> Option<usize> {
+fn kitty_get_id_closest_window_with_cwd(i_current_window: usize, windows: &[WindowA]) -> Option<usize> {
     let (current_window_id, current_window_cwd) = {
         let t = &windows[i_current_window];
         (t.id, t.cwd.clone())
@@ -175,7 +190,7 @@ fn kitty_get_id_closest_window_with_cwd(i_current_window: usize, windows: Vec<Wi
         .enumerate()
         .map(|(i, a)| WindowB {
             id: a.id,
-            cwd: a.cwd,
+            cwd: a.cwd.to_string(),
             dist: i.abs_diff(i_current_window),
         })
         .filter(|w| w.cwd == current_window_cwd)
@@ -237,7 +252,7 @@ mod test_get_id_closest_window_with_cwd {
             },
         ];
         assert_eq!(
-            kitty_get_id_closest_window_with_cwd(i_current_window, windows).unwrap(),
+            kitty_get_id_closest_window_with_cwd(i_current_window, &windows).unwrap(),
             1
         );
     }
@@ -250,7 +265,7 @@ mod test_get_id_closest_window_with_cwd {
             cwd: "cargo".into(),
         }];
         assert_eq!(
-            kitty_get_id_closest_window_with_cwd(i_current_window, windows),
+            kitty_get_id_closest_window_with_cwd(i_current_window, &windows),
             None
         );
     }
@@ -277,7 +292,7 @@ mod test_get_id_closest_window_with_cwd {
             },
         ];
         assert_eq!(
-            kitty_get_id_closest_window_with_cwd(i_current_window, windows).unwrap(),
+            kitty_get_id_closest_window_with_cwd(i_current_window, &windows).unwrap(),
             2
         );
     }
@@ -304,7 +319,7 @@ mod test_get_id_closest_window_with_cwd {
             },
         ];
         assert_eq!(
-            kitty_get_id_closest_window_with_cwd(i_current_window, windows).unwrap(),
+            kitty_get_id_closest_window_with_cwd(i_current_window, &windows).unwrap(),
             3
         );
     }
@@ -335,14 +350,22 @@ mod test_get_id_closest_window_with_cwd {
             },
         ];
         assert_eq!(
-            kitty_get_id_closest_window_with_cwd(i_current_window, windows).unwrap(),
+            kitty_get_id_closest_window_with_cwd(i_current_window, &windows).unwrap(),
             0
         );
     }
 }
 
+fn kitty_move_focused_back_by(dx: usize) {
+    dbg!(format!("moving back by {dx}"));
+    let _ = Command::new("kitty")
+        .args(["@", "kitten", "mykitten123.py", &format!("{dx}")])
+        .output()
+        .expect("failed to focus tab");
+}
+
 fn kitty_focus_window(id: usize) {
-    let output = Command::new("kitty")
+    let _ = Command::new("kitty")
         .args(["@", "focus-window", "-m", &format!("id:{id}")])
         .output()
         .expect("failed to focus tab");
@@ -353,14 +376,14 @@ fn kitty_new_tab(cwd: &str, dont_take_focus: bool) {
     if dont_take_focus {
         args.push("--dont-take-focus");
     }
-    let output = Command::new("kitty")
+    let _ = Command::new("kitty")
         .args(args)
         .output()
         .expect("failed to launch tab");
 }
 
 fn kitty_send_cmd(id: isize, cmd: &str) {
-    let output = Command::new("kitty")
+    let _ = Command::new("kitty")
         .args(["@", "send-text", "-m", &format!("id:{id}"), &format!("{cmd}\\r")])
         .output()
         .expect("failed to run cargo");
@@ -393,7 +416,7 @@ fn main() {
     let flags = Flags::parse();
 
     let id_window_runner: isize = if let Some(id_window) =
-        kitty_get_id_closest_window_with_cwd(package.i_current_window, package.windows)
+        kitty_get_id_closest_window_with_cwd(package.i_current_window, &package.windows)
     {
         // println!("dont_take_focusing window {id_window_runner}");
         if !flags.dont_take_focus {
@@ -406,11 +429,14 @@ fn main() {
         kitty_new_tab(&cwd_current_tab, flags.dont_take_focus);
         -1 as isize
     };
-    if let Some(cmd) = flags.command {
-        kitty_send_cmd(id_window_runner, &cmd);
-    }
+    dbg!(&package.windows);
     if flags.adjacent {
+        let dx = kitty_get_needed_dx_new_tab_to_right_of_current_tab(package.i_current_window, &package.windows);
+        kitty_move_focused_back_by(dx);
     }
+    // if let Some(cmd) = flags.command {
+    //     kitty_send_cmd(id_window_runner, &cmd);
+    // }
     if flags.jump_back {
         kitty_focus_window(id_window_current);
     }
