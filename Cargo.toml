@@ -1,6 +1,6 @@
 cargo-features = ["codegen-backend"]
 [package]
-name = "kitty-cargo-task"
+name = "kittles"
 version = "0.1.0"
 edition = "2024"
 

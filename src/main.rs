@@ -480,7 +480,8 @@ struct Flags {
     /// whether or not to focus the new tab
     #[arg(short, long)]
     dont_take_focus: bool,
-    /// whether or not to focus new tab
+    /// (wip) whether or not to return to original tab after command is run.  
+    /// currently replicates dont_take_focus behavior
     #[arg(short, long)]
     jump_back: bool,
     /// whether or not to open tab to the right next to the currently focused tab (if applicable)
