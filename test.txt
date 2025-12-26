@@ -1,0 +1,1314 @@
+[
+  {
+    "background_opacity": 1.0,
+    "id": 1,
+    "is_active": true,
+    "is_focused": true,
+    "last_focused": true,
+    "platform_window_id": 3178,
+    "tabs": [
+      {
+        "active_window_history": [
+          12
+        ],
+        "enabled_layouts": [
+          "grid",
+          "tall:bias=50;full_size=2",
+          "fat",
+          "horizontal",
+          "splits",
+          "stack",
+          "tall",
+          "vertical"
+        ],
+        "groups": [
+          {
+            "id": 12,
+            "windows": [
+              12
+            ]
+          }
+        ],
+        "id": 12,
+        "is_active": false,
+        "is_focused": false,
+        "layout": "grid",
+        "layout_opts": {},
+        "layout_state": {
+          "all_windows": {
+            "active_group_history": [
+              12
+            ],
+            "active_group_idx": 0,
+            "window_groups": [
+              {
+                "id": 12,
+                "window_ids": [
+                  12
+                ]
+              }
+            ]
+          },
+          "biased_cols": {},
+          "biased_rows": {},
+          "class": "Grid",
+          "opts": {}
+        },
+        "title": "nvim .",
+        "windows": [
+          {
+            "at_prompt": false,
+            "cmdline": [
+              "/Applications/kitty.app/Contents/MacOS/kitten",
+              "run-shell",
+              "--shell=/bin/zsh",
+              "--shell-integration=enabled",
+              "--env=KITTY_HOLD=1",
+              "/usr/bin/login",
+              "-f",
+              "-l",
+              "-p",
+              "oliver",
+              "/Applications/kitty.app/Contents/MacOS/kitten",
+              "run-shell",
+              "--shell",
+              "/bin/zsh",
+              "--shell-integration",
+              "enabled",
+              "--cwd=/Users/oliver/git/folding-with-yuu"
+            ],
+            "columns": 180,
+            "created_at": 1766162979550465000,
+            "cwd": "/Users/oliver",
+            "env": {
+              "KITTY_WINDOW_ID": "12",
+              "MANPATH": "/Applications/kitty.app/Contents/Resources/man:",
+              "PWD": "/Users/oliver/git/folding-with-yuu"
+            },
+            "foreground_processes": [
+              {
+                "cmdline": [
+                  "nvim",
+                  "."
+                ],
+                "cwd": "/Users/oliver/git/folding-with-yuu",
+                "pid": 21799
+              }
+            ],
+            "id": 12,
+            "in_alternate_screen": true,
+            "is_active": true,
+            "is_focused": true,
+            "is_self": false,
+            "last_cmd_exit_status": 0,
+            "last_reported_cmdline": "nvim .",
+            "lines": 47,
+            "pid": 89303,
+            "title": "nvim .",
+            "user_vars": {}
+          }
+        ]
+      },
+      {
+        "active_window_history": [
+          52
+        ],
+        "enabled_layouts": [
+          "grid",
+          "tall:bias=50;full_size=2",
+          "fat",
+          "horizontal",
+          "splits",
+          "stack",
+          "tall",
+          "vertical"
+        ],
+        "groups": [
+          {
+            "id": 49,
+            "windows": [
+              52
+            ]
+          }
+        ],
+        "id": 47,
+        "is_active": false,
+        "is_focused": false,
+        "layout": "grid",
+        "layout_opts": {},
+        "layout_state": {
+          "all_windows": {
+            "active_group_history": [
+              49
+            ],
+            "active_group_idx": 0,
+            "window_groups": [
+              {
+                "id": 49,
+                "window_ids": [
+                  52
+                ]
+              }
+            ]
+          },
+          "biased_cols": {},
+          "biased_rows": {},
+          "class": "Grid",
+          "opts": {}
+        },
+        "title": "nvim TESTING.md",
+        "windows": [
+          {
+            "at_prompt": false,
+            "cmdline": [
+              "/bin/zsh"
+            ],
+            "columns": 180,
+            "created_at": 1766594443419403000,
+            "cwd": "/Users/oliver/git/folding-with-yuu",
+            "env": {
+              "KITTY_WINDOW_ID": "52",
+              "MANPATH": "/Applications/kitty.app/Contents/Resources/man:",
+              "PWD": "/Users/oliver"
+            },
+            "foreground_processes": [
+              {
+                "cmdline": [
+                  "nvim",
+                  "TESTING.md"
+                ],
+                "cwd": "/Users/oliver/.local/share/nvim/lazy/mini.nvim",
+                "pid": 23412
+              }
+            ],
+            "id": 52,
+            "in_alternate_screen": true,
+            "is_active": true,
+            "is_focused": true,
+            "is_self": false,
+            "last_cmd_exit_status": 0,
+            "last_reported_cmdline": "nvim TESTING.md",
+            "lines": 47,
+            "pid": 23283,
+            "title": "nvim TESTING.md",
+            "user_vars": {}
+          }
+        ]
+      },
+      {
+        "active_window_history": [
+          29,
+          34
+        ],
+        "enabled_layouts": [
+          "grid",
+          "tall:bias=50;full_size=2",
+          "fat",
+          "horizontal",
+          "splits",
+          "stack",
+          "tall",
+          "vertical"
+        ],
+        "groups": [
+          {
+            "id": 29,
+            "windows": [
+              29
+            ]
+          },
+          {
+            "id": 32,
+            "windows": [
+              34
+            ]
+          }
+        ],
+        "id": 29,
+        "is_active": false,
+        "is_focused": false,
+        "layout": "grid",
+        "layout_opts": {},
+        "layout_state": {
+          "all_windows": {
+            "active_group_history": [
+              29,
+              32
+            ],
+            "active_group_idx": 0,
+            "window_groups": [
+              {
+                "id": 29,
+                "window_ids": [
+                  29
+                ]
+              },
+              {
+                "id": 32,
+                "window_ids": [
+                  34
+                ]
+              }
+            ]
+          },
+          "biased_cols": {},
+          "biased_rows": {},
+          "class": "Grid",
+          "opts": {}
+        },
+        "title": "npm run start",
+        "windows": [
+          {
+            "at_prompt": false,
+            "cmdline": [
+              "/bin/zsh"
+            ],
+            "columns": 90,
+            "created_at": 1766184962956806000,
+            "cwd": "/Users/oliver/.local/share/nvim/lazy/mini.nvim",
+            "env": {
+              "KITTY_WINDOW_ID": "29",
+              "MANPATH": "/Applications/kitty.app/Contents/Resources/man:",
+              "PWD": "/Users/oliver"
+            },
+            "foreground_processes": [
+              {
+                "cmdline": [
+                  "servez git/webgpufundamentals/out",
+                  "",
+                  ""
+                ],
+                "cwd": "/Users/oliver/git/webgpufundamentals",
+                "pid": 31342
+              },
+              {
+                "cmdline": [
+                  "npm run start",
+                  "",
+                  "",
+                  ""
+                ],
+                "cwd": "/Users/oliver/git/webgpufundamentals",
+                "pid": 31328
+              }
+            ],
+            "id": 29,
+            "in_alternate_screen": false,
+            "is_active": true,
+            "is_focused": true,
+            "is_self": false,
+            "last_cmd_exit_status": 0,
+            "last_reported_cmdline": "npm run start",
+            "lines": 47,
+            "pid": 30964,
+            "title": "npm run start",
+            "user_vars": {}
+          },
+          {
+            "at_prompt": true,
+            "cmdline": [
+              "/bin/zsh"
+            ],
+            "columns": 90,
+            "created_at": 1766185450249885000,
+            "cwd": "/Users/oliver/git/webgpufundamentals",
+            "env": {
+              "KITTY_WINDOW_ID": "34",
+              "MANPATH": "/Applications/kitty.app/Contents/Resources/man:",
+              "PWD": "/Users/oliver"
+            },
+            "foreground_processes": [
+              {
+                "cmdline": [
+                  "-zsh"
+                ],
+                "cwd": "/Users/oliver/git/webgpufundamentals",
+                "pid": 32595
+              }
+            ],
+            "id": 34,
+            "in_alternate_screen": false,
+            "is_active": false,
+            "is_focused": false,
+            "is_self": false,
+            "last_cmd_exit_status": 0,
+            "last_reported_cmdline": "rg blending",
+            "lines": 47,
+            "pid": 32594,
+            "title": "~/git/webgpufundamentals",
+            "user_vars": {}
+          }
+        ]
+      },
+      {
+        "active_window_history": [
+          35
+        ],
+        "enabled_layouts": [
+          "grid",
+          "tall:bias=50;full_size=2",
+          "fat",
+          "horizontal",
+          "splits",
+          "stack",
+          "tall",
+          "vertical"
+        ],
+        "groups": [
+          {
+            "id": 33,
+            "windows": [
+              35
+            ]
+          },
+          {
+            "id": 34,
+            "windows": [
+              36
+            ]
+          }
+        ],
+        "id": 32,
+        "is_active": false,
+        "is_focused": false,
+        "layout": "grid",
+        "layout_opts": {},
+        "layout_state": {
+          "all_windows": {
+            "active_group_history": [
+              33
+            ],
+            "active_group_idx": 1,
+            "window_groups": [
+              {
+                "id": 33,
+                "window_ids": [
+                  35
+                ]
+              },
+              {
+                "id": 34,
+                "window_ids": [
+                  36
+                ]
+              }
+            ]
+          },
+          "biased_cols": {},
+          "biased_rows": {},
+          "class": "Grid",
+          "opts": {}
+        },
+        "title": "python -m http.server 8001",
+        "windows": [
+          {
+            "at_prompt": false,
+            "cmdline": [
+              "/bin/zsh"
+            ],
+            "columns": 90,
+            "created_at": 1766185698459670000,
+            "cwd": "/Users/oliver/git/webgpufundamentals",
+            "env": {
+              "KITTY_WINDOW_ID": "35",
+              "MANPATH": "/Applications/kitty.app/Contents/Resources/man:",
+              "PWD": "/Users/oliver"
+            },
+            "foreground_processes": [
+              {
+                "cmdline": [
+                  "python3",
+                  "-m",
+                  "http.server"
+                ],
+                "cwd": "/Users/oliver/git/gpuweb/spec",
+                "pid": 33218
+              }
+            ],
+            "id": 35,
+            "in_alternate_screen": false,
+            "is_active": false,
+            "is_focused": false,
+            "is_self": false,
+            "last_cmd_exit_status": 0,
+            "last_reported_cmdline": "python -m http.server",
+            "lines": 47,
+            "pid": 32846,
+            "title": "python -m http.server",
+            "user_vars": {}
+          },
+          {
+            "at_prompt": false,
+            "cmdline": [
+              "/bin/zsh"
+            ],
+            "columns": 90,
+            "created_at": 1766185891855518000,
+            "cwd": "/Users/oliver/git/gpuweb/spec",
+            "env": {
+              "KITTY_WINDOW_ID": "36",
+              "MANPATH": "/Applications/kitty.app/Contents/Resources/man:",
+              "PWD": "/Users/oliver"
+            },
+            "foreground_processes": [
+              {
+                "cmdline": [
+                  "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
+                  "-m",
+                  "http.server",
+                  "8001"
+                ],
+                "cwd": "/Users/oliver/git/gpuweb/wgsl",
+                "pid": 33393
+              }
+            ],
+            "id": 36,
+            "in_alternate_screen": false,
+            "is_active": true,
+            "is_focused": true,
+            "is_self": false,
+            "last_cmd_exit_status": 1,
+            "last_reported_cmdline": "python -m http.server 8001",
+            "lines": 47,
+            "pid": 33259,
+            "title": "python -m http.server 8001",
+            "user_vars": {}
+          }
+        ]
+      },
+      {
+        "active_window_history": [
+          38
+        ],
+        "enabled_layouts": [
+          "grid",
+          "tall:bias=50;full_size=2",
+          "fat",
+          "horizontal",
+          "splits",
+          "stack",
+          "tall",
+          "vertical"
+        ],
+        "groups": [
+          {
+            "id": 36,
+            "windows": [
+              38
+            ]
+          }
+        ],
+        "id": 34,
+        "is_active": false,
+        "is_focused": false,
+        "layout": "grid",
+        "layout_opts": {},
+        "layout_state": {
+          "all_windows": {
+            "active_group_history": [
+              36
+            ],
+            "active_group_idx": 0,
+            "window_groups": [
+              {
+                "id": 36,
+                "window_ids": [
+                  38
+                ]
+              }
+            ]
+          },
+          "biased_cols": {},
+          "biased_rows": {},
+          "class": "Grid",
+          "opts": {}
+        },
+        "title": "bun start",
+        "windows": [
+          {
+            "at_prompt": false,
+            "cmdline": [
+              "/bin/zsh"
+            ],
+            "columns": 180,
+            "created_at": 1766218533003266000,
+            "cwd": "/Users/oliver/git/gpuweb/wgsl",
+            "env": {
+              "KITTY_WINDOW_ID": "38",
+              "MANPATH": "/Applications/kitty.app/Contents/Resources/man:",
+              "PWD": "/Users/oliver"
+            },
+            "foreground_processes": [
+              {
+                "cmdline": [
+                  "/Users/oliver/git/excalidraw/node_modules/vite/node_modules/@esbuild/darwin-arm64/bin/esbuild",
+                  "--service=0.19.12",
+                  "--ping"
+                ],
+                "cwd": "/Users/oliver/git/excalidraw/excalidraw-app",
+                "pid": 40409
+              },
+              {
+                "cmdline": [
+                  "/Users/oliver/.volta/tools/image/node/25.2.1/bin/node",
+                  "/Users/oliver/git/excalidraw/node_modules/.bin/vite"
+                ],
+                "cwd": "/Users/oliver/git/excalidraw/excalidraw-app",
+                "pid": 40406
+              },
+              {
+                "cmdline": [
+                  "/bin/sh",
+                  "-c",
+                  "yarn && vite"
+                ],
+                "cwd": "/Users/oliver/git/excalidraw/excalidraw-app",
+                "pid": 40249
+              },
+              {
+                "cmdline": [
+                  "node",
+                  "/Users/oliver/.volta/tools/image/yarn/1.22.17/bin/yarn.js",
+                  "--cwd",
+                  "./excalidraw-app",
+                  "start"
+                ],
+                "cwd": "/Users/oliver/git/excalidraw",
+                "pid": 40238
+              },
+              {
+                "cmdline": [
+                  "yarn",
+                  "--cwd",
+                  "./excalidraw-app",
+                  "start"
+                ],
+                "cwd": "/Users/oliver/git/excalidraw",
+                "pid": 40237
+              },
+              {
+                "cmdline": [
+                  "bun",
+                  "start"
+                ],
+                "cwd": "/Users/oliver/git/excalidraw",
+                "pid": 40236
+              }
+            ],
+            "id": 38,
+            "in_alternate_screen": false,
+            "is_active": true,
+            "is_focused": true,
+            "is_self": false,
+            "last_cmd_exit_status": 0,
+            "last_reported_cmdline": "bun start",
+            "lines": 47,
+            "pid": 39826,
+            "title": "bun start",
+            "user_vars": {}
+          }
+        ]
+      },
+      {
+        "active_window_history": [
+          41
+        ],
+        "enabled_layouts": [
+          "grid",
+          "tall:bias=50;full_size=2",
+          "fat",
+          "horizontal",
+          "splits",
+          "stack",
+          "tall",
+          "vertical"
+        ],
+        "groups": [
+          {
+            "id": 39,
+            "windows": [
+              41
+            ]
+          }
+        ],
+        "id": 37,
+        "is_active": false,
+        "is_focused": false,
+        "layout": "grid",
+        "layout_opts": {},
+        "layout_state": {
+          "all_windows": {
+            "active_group_history": [
+              39
+            ],
+            "active_group_idx": 0,
+            "window_groups": [
+              {
+                "id": 39,
+                "window_ids": [
+                  41
+                ]
+              }
+            ]
+          },
+          "biased_cols": {},
+          "biased_rows": {},
+          "class": "Grid",
+          "opts": {}
+        },
+        "title": "~/Downloads",
+        "windows": [
+          {
+            "at_prompt": true,
+            "cmdline": [
+              "/bin/zsh"
+            ],
+            "columns": 180,
+            "created_at": 1766320634138811000,
+            "cwd": "/Users/oliver/git/excalidraw",
+            "env": {
+              "KITTY_WINDOW_ID": "41",
+              "MANPATH": "/Applications/kitty.app/Contents/Resources/man:",
+              "PWD": "/Users/oliver"
+            },
+            "foreground_processes": [
+              {
+                "cmdline": [
+                  "-zsh"
+                ],
+                "cwd": "/Users/oliver/Downloads",
+                "pid": 57613
+              }
+            ],
+            "id": 41,
+            "in_alternate_screen": false,
+            "is_active": true,
+            "is_focused": true,
+            "is_self": false,
+            "last_cmd_exit_status": 0,
+            "last_reported_cmdline": "mpv Best\\ of\\ 2017\\ Mix.m4a --start=0",
+            "lines": 47,
+            "pid": 57612,
+            "title": "~/Downloads",
+            "user_vars": {}
+          }
+        ]
+      },
+      {
+        "active_window_history": [
+          91
+        ],
+        "enabled_layouts": [
+          "grid",
+          "tall:bias=50;full_size=2",
+          "fat",
+          "horizontal",
+          "splits",
+          "stack",
+          "tall",
+          "vertical"
+        ],
+        "groups": [
+          {
+            "id": 87,
+            "windows": [
+              91
+            ]
+          }
+        ],
+        "id": 82,
+        "is_active": false,
+        "is_focused": false,
+        "layout": "grid",
+        "layout_opts": {},
+        "layout_state": {
+          "all_windows": {
+            "active_group_history": [
+              87
+            ],
+            "active_group_idx": 0,
+            "window_groups": [
+              {
+                "id": 87,
+                "window_ids": [
+                  91
+                ]
+              }
+            ]
+          },
+          "biased_cols": {},
+          "biased_rows": {},
+          "class": "Grid",
+          "opts": {}
+        },
+        "title": "python -m http.server 3004",
+        "windows": [
+          {
+            "at_prompt": false,
+            "cmdline": [
+              "/bin/zsh"
+            ],
+            "columns": 180,
+            "created_at": 1766628066038888000,
+            "cwd": "/Users/oliver/Downloads",
+            "env": {
+              "KITTY_WINDOW_ID": "91",
+              "PWD": "/Users/oliver"
+            },
+            "foreground_processes": [
+              {
+                "cmdline": [
+                  "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
+                  "-m",
+                  "http.server",
+                  "3004"
+                ],
+                "cwd": "/Users/oliver/git/python-3.14-docs-html",
+                "pid": 37350
+              }
+            ],
+            "id": 91,
+            "in_alternate_screen": false,
+            "is_active": true,
+            "is_focused": true,
+            "is_self": false,
+            "last_cmd_exit_status": 0,
+            "last_reported_cmdline": "python -m http.server 3004",
+            "lines": 47,
+            "pid": 36851,
+            "title": "python -m http.server 3004",
+            "user_vars": {}
+          }
+        ]
+      },
+      {
+        "active_window_history": [
+          60
+        ],
+        "enabled_layouts": [
+          "grid",
+          "tall:bias=50;full_size=2",
+          "fat",
+          "horizontal",
+          "splits",
+          "stack",
+          "tall",
+          "vertical"
+        ],
+        "groups": [
+          {
+            "id": 57,
+            "windows": [
+              60
+            ]
+          }
+        ],
+        "id": 55,
+        "is_active": false,
+        "is_focused": false,
+        "layout": "tall",
+        "layout_opts": {
+          "bias": 50,
+          "full_size": 2,
+          "mirrored": "n"
+        },
+        "layout_state": {
+          "all_windows": {
+            "active_group_history": [
+              139,
+              57
+            ],
+            "active_group_idx": 0,
+            "window_groups": [
+              {
+                "id": 57,
+                "window_ids": [
+                  60
+                ]
+              }
+            ]
+          },
+          "biased_map": {},
+          "class": "Tall",
+          "main_bias": [
+            0.25,
+            0.25,
+            0.5
+          ],
+          "opts": {
+            "bias": 50,
+            "full_size": 2,
+            "mirrored": "n"
+          }
+        },
+        "title": "nvim .",
+        "windows": [
+          {
+            "at_prompt": false,
+            "cmdline": [
+              "/bin/zsh"
+            ],
+            "columns": 180,
+            "created_at": 1766602225559707000,
+            "cwd": "/Users/oliver/git/python-3.14-docs-html",
+            "env": {
+              "KITTY_WINDOW_ID": "60",
+              "MANPATH": "/Applications/kitty.app/Contents/Resources/man:",
+              "PWD": "/Users/oliver"
+            },
+            "foreground_processes": [
+              {
+                "cmdline": [
+                  "nvim",
+                  "."
+                ],
+                "cwd": "/Users/oliver/git/kitty-cargo-task",
+                "pid": 77977
+              }
+            ],
+            "id": 60,
+            "in_alternate_screen": true,
+            "is_active": true,
+            "is_focused": true,
+            "is_self": false,
+            "last_cmd_exit_status": 0,
+            "last_reported_cmdline": "nvim .",
+            "lines": 47,
+            "pid": 26323,
+            "title": "nvim .",
+            "user_vars": {}
+          }
+        ]
+      },
+      {
+        "active_window_history": [
+          142
+        ],
+        "enabled_layouts": [
+          "grid",
+          "tall:bias=50;full_size=2",
+          "fat",
+          "horizontal",
+          "splits",
+          "stack",
+          "tall",
+          "vertical"
+        ],
+        "groups": [
+          {
+            "id": 125,
+            "windows": [
+              142
+            ]
+          }
+        ],
+        "id": 114,
+        "is_active": true,
+        "is_focused": true,
+        "layout": "grid",
+        "layout_opts": {},
+        "layout_state": {
+          "all_windows": {
+            "active_group_history": [
+              125
+            ],
+            "active_group_idx": 0,
+            "window_groups": [
+              {
+                "id": 125,
+                "window_ids": [
+                  142
+                ]
+              }
+            ]
+          },
+          "biased_cols": {},
+          "biased_rows": {},
+          "class": "Grid",
+          "opts": {}
+        },
+        "title": "kitty @ ls > test.txt",
+        "windows": [
+          {
+            "at_prompt": false,
+            "cmdline": [
+              "/bin/zsh"
+            ],
+            "columns": 180,
+            "created_at": 1766686075773896000,
+            "cwd": "/Users/oliver/git/kitty-cargo-task",
+            "env": {
+              "KITTY_WINDOW_ID": "142",
+              "PWD": "/Users/oliver"
+            },
+            "foreground_processes": [
+              {
+                "cmdline": [
+                  "kitten",
+                  "@",
+                  "ls"
+                ],
+                "cwd": "/Users/oliver/git/kitty-cargo-task",
+                "pid": 78496
+              }
+            ],
+            "id": 142,
+            "in_alternate_screen": false,
+            "is_active": true,
+            "is_focused": true,
+            "is_self": true,
+            "last_cmd_exit_status": 0,
+            "last_reported_cmdline": "kitty @ ls > test.txt",
+            "lines": 47,
+            "pid": 70574,
+            "title": "kitty @ ls > test.txt",
+            "user_vars": {}
+          }
+        ]
+      },
+      {
+        "active_window_history": [
+          75
+        ],
+        "enabled_layouts": [
+          "grid",
+          "tall:bias=50;full_size=2",
+          "fat",
+          "horizontal",
+          "splits",
+          "stack",
+          "tall",
+          "vertical"
+        ],
+        "groups": [
+          {
+            "id": 72,
+            "windows": [
+              75
+            ]
+          }
+        ],
+        "id": 68,
+        "is_active": false,
+        "is_focused": false,
+        "layout": "grid",
+        "layout_opts": {},
+        "layout_state": {
+          "all_windows": {
+            "active_group_history": [
+              72
+            ],
+            "active_group_idx": 0,
+            "window_groups": [
+              {
+                "id": 72,
+                "window_ids": [
+                  75
+                ]
+              }
+            ]
+          },
+          "biased_cols": {},
+          "biased_rows": {},
+          "class": "Grid",
+          "opts": {}
+        },
+        "title": "kc",
+        "windows": [
+          {
+            "at_prompt": false,
+            "cmdline": [
+              "/bin/zsh"
+            ],
+            "columns": 180,
+            "created_at": 1766620949694879000,
+            "cwd": "/Users/oliver/git/kitty-cargo-task",
+            "env": {
+              "KITTY_WINDOW_ID": "75",
+              "MANPATH": "/Applications/kitty.app/Contents/Resources/man:",
+              "PWD": "/Users/oliver"
+            },
+            "foreground_processes": [
+              {
+                "cmdline": [
+                  "nvim",
+                  "./kitty.conf"
+                ],
+                "cwd": "/Users/oliver/.config/kitty",
+                "pid": 34078
+              }
+            ],
+            "id": 75,
+            "in_alternate_screen": true,
+            "is_active": true,
+            "is_focused": true,
+            "is_self": false,
+            "last_cmd_exit_status": 0,
+            "last_reported_cmdline": "kc",
+            "lines": 47,
+            "pid": 30392,
+            "title": "kc",
+            "user_vars": {}
+          }
+        ]
+      },
+      {
+        "active_window_history": [
+          82
+        ],
+        "enabled_layouts": [
+          "grid",
+          "tall:bias=50;full_size=2",
+          "fat",
+          "horizontal",
+          "splits",
+          "stack",
+          "tall",
+          "vertical"
+        ],
+        "groups": [
+          {
+            "id": 78,
+            "windows": [
+              82
+            ]
+          }
+        ],
+        "id": 73,
+        "is_active": false,
+        "is_focused": false,
+        "layout": "grid",
+        "layout_opts": {},
+        "layout_state": {
+          "all_windows": {
+            "active_group_history": [
+              78
+            ],
+            "active_group_idx": 0,
+            "window_groups": [
+              {
+                "id": 78,
+                "window_ids": [
+                  82
+                ]
+              }
+            ]
+          },
+          "biased_cols": {},
+          "biased_rows": {},
+          "class": "Grid",
+          "opts": {}
+        },
+        "title": "nvim .",
+        "windows": [
+          {
+            "at_prompt": false,
+            "cmdline": [
+              "/bin/zsh"
+            ],
+            "columns": 180,
+            "created_at": 1766622650568953000,
+            "cwd": "/Users/oliver/.config/kitty",
+            "env": {
+              "KITTY_WINDOW_ID": "82",
+              "PWD": "/Users/oliver"
+            },
+            "foreground_processes": [
+              {
+                "cmdline": [
+                  "nvim",
+                  "."
+                ],
+                "cwd": "/Users/oliver/git/kitty",
+                "pid": 44232
+              }
+            ],
+            "id": 82,
+            "in_alternate_screen": true,
+            "is_active": true,
+            "is_focused": true,
+            "is_self": false,
+            "last_cmd_exit_status": 0,
+            "last_reported_cmdline": "nvim .",
+            "lines": 47,
+            "pid": 35182,
+            "title": "nvim .",
+            "user_vars": {}
+          }
+        ]
+      },
+      {
+        "active_window_history": [
+          74
+        ],
+        "enabled_layouts": [
+          "grid",
+          "tall:bias=50;full_size=2",
+          "fat",
+          "horizontal",
+          "splits",
+          "stack",
+          "tall",
+          "vertical"
+        ],
+        "groups": [
+          {
+            "id": 71,
+            "windows": [
+              74
+            ]
+          }
+        ],
+        "id": 67,
+        "is_active": false,
+        "is_focused": false,
+        "layout": "grid",
+        "layout_opts": {},
+        "layout_state": {
+          "all_windows": {
+            "active_group_history": [
+              71
+            ],
+            "active_group_idx": 0,
+            "window_groups": [
+              {
+                "id": 71,
+                "window_ids": [
+                  74
+                ]
+              }
+            ]
+          },
+          "biased_cols": {},
+          "biased_rows": {},
+          "class": "Grid",
+          "opts": {}
+        },
+        "title": "nvim .",
+        "windows": [
+          {
+            "at_prompt": false,
+            "cmdline": [
+              "/bin/zsh"
+            ],
+            "columns": 180,
+            "created_at": 1766620925643795000,
+            "cwd": "/Users/oliver/git/kitty",
+            "env": {
+              "KITTY_WINDOW_ID": "74",
+              "MANPATH": "/Applications/kitty.app/Contents/Resources/man:",
+              "PWD": "/Users/oliver"
+            },
+            "foreground_processes": [
+              {
+                "cmdline": [
+                  "nvim",
+                  "."
+                ],
+                "cwd": "/Users/oliver/.config/kitty",
+                "pid": 56973
+              }
+            ],
+            "id": 74,
+            "in_alternate_screen": true,
+            "is_active": true,
+            "is_focused": true,
+            "is_self": false,
+            "last_cmd_exit_status": 0,
+            "last_reported_cmdline": "nvim .",
+            "lines": 47,
+            "pid": 30261,
+            "title": "nvim .",
+            "user_vars": {}
+          }
+        ]
+      },
+      {
+        "active_window_history": [
+          131
+        ],
+        "enabled_layouts": [
+          "grid",
+          "tall:bias=50;full_size=2",
+          "fat",
+          "horizontal",
+          "splits",
+          "stack",
+          "tall",
+          "vertical"
+        ],
+        "groups": [
+          {
+            "id": 118,
+            "windows": [
+              131
+            ]
+          }
+        ],
+        "id": 110,
+        "is_active": false,
+        "is_focused": false,
+        "layout": "grid",
+        "layout_opts": {},
+        "layout_state": {
+          "all_windows": {
+            "active_group_history": [
+              118
+            ],
+            "active_group_idx": 0,
+            "window_groups": [
+              {
+                "id": 118,
+                "window_ids": [
+                  131
+                ]
+              }
+            ]
+          },
+          "biased_cols": {},
+          "biased_rows": {},
+          "class": "Grid",
+          "opts": {}
+        },
+        "title": "~/git/neovim",
+        "windows": [
+          {
+            "at_prompt": true,
+            "cmdline": [
+              "/bin/zsh"
+            ],
+            "columns": 180,
+            "created_at": 1766640245151988000,
+            "cwd": "/Users/oliver/.config/kitty",
+            "env": {
+              "KITTY_WINDOW_ID": "131",
+              "PWD": "/Users/oliver"
+            },
+            "foreground_processes": [
+              {
+                "cmdline": [
+                  "-zsh"
+                ],
+                "cwd": "/Users/oliver/git/neovim",
+                "pid": 56256
+              }
+            ],
+            "id": 131,
+            "in_alternate_screen": false,
+            "is_active": true,
+            "is_focused": true,
+            "is_self": false,
+            "last_cmd_exit_status": 0,
+            "last_reported_cmdline": "sudo make install",
+            "lines": 47,
+            "pid": 56255,
+            "title": "~/git/neovim",
+            "user_vars": {}
+          }
+        ]
+      }
+    ],
+    "wm_class": "kitty",
+    "wm_name": "kitty"
+  }
+]

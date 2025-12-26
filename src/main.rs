@@ -1,75 +1,121 @@
+use clap::Parser;
+use serde::{Deserialize, Serialize};
 use serde_json::{Result, Value};
 use std::{process::Command, thread::sleep, time::Duration};
-use clap::Parser;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 struct Package {
     i_current_window: usize,
-    windows: Vec<WindowA>,
+    i_current_window_cwd: usize,
+    tabs: Vec<Tab>,
+    windows_cwd: Vec<WindowCWD>
 }
 
-fn kitty_get_windows_package() -> Package {
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct Screen {
+    id: usize,
+    tabs: Vec<Tab>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct Tab {
+    id: usize,
+    windows: Vec<Window>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+// note: fairly certain that cwd for window is bugged
+struct Window {
+    id: usize,
+    is_self: bool,
+    foreground_processes: Vec<ForegroundProcess>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct ForegroundProcess {
+    cmdline: Vec<String>,
+    cwd: String,
+}
+
+fn kitty_ls() -> String {
     let output = Command::new("kitty")
         .args(["@", "ls"])
         .output()
         .expect("failed to run kitty");
-    let kitty_ls = str::from_utf8(&output.stdout).unwrap();
-    let screens: Value = serde_json::from_str(kitty_ls).expect("failed to parse");
-    // dbg!(&v);
+    str::from_utf8(&output.stdout).unwrap().to_string()
+}
 
-    let mut windows = vec![];
-    let mut i_current_window = None;
-    for screen in screens.as_array().unwrap().iter() {
-        for tab in screen["tabs"].as_array().unwrap().iter() {
-            'a: for window in tab["windows"].as_array().unwrap().iter() {
-                for foreground_process in window["foreground_processes"].as_array().unwrap().iter()
-                {
-                    if window["is_self"].as_bool().unwrap() {
-                        windows.push(WindowA {
-                            id: window["id"].as_u64().unwrap() as usize,
-                            cwd: foreground_process["cwd"].as_str().unwrap().into(),
-                        }); // use foreground over window cwd
-                        i_current_window = Some(windows.len() - 1);
-                        continue 'a;
-                    } else {
-                        // dbg!(foreground_process["cmdline"].as_array().unwrap());
-                        // only add zsh windows as jump options
-                        for cmd in foreground_process["cmdline"].as_array().unwrap().iter() {
-                            let cmd = cmd.as_str().unwrap();
-                            if ["zsh", "bash", "fish", "sh", "nu", "ksh"]
-                                .iter()
-                                .any(|shell| cmd.contains(shell))
-                            {
-                                // dbg!("gg contains");
-                                windows.push(WindowA {
-                                    id: window["id"].as_u64().unwrap() as usize,
-                                    cwd: foreground_process["cwd"].as_str().unwrap().into(),
-                                }); // use foreground over window cwd
-                                continue 'a;
-                            }
-                        }
-                    }
-                }
-            }
+fn kitty_get_windows_package(kitty_ls: &str) -> Package {
+    let screens: Vec<Screen> = serde_json::from_str(kitty_ls).expect("failed to parse");
+
+    // assume all tabs have 1 window
+    let tabs = screens[0].tabs.clone();
+    dbg!(&tabs);
+    let i_current_window = tabs.iter().position(|t| t.windows.iter().any(|w| w.is_self)).unwrap();
+    let mut i_current_window_cwd = None;
+
+    let mut i = 0;
+    let tabs_cwd = tabs.clone().into_iter().filter_map(|t| {
+        if t.windows[0].is_self {
+            i_current_window_cwd = Some(i);
+            i += 1;
+            Some(WindowCWD { id: t.windows[0].id, cwd: t.windows[0].foreground_processes.iter().rev().next().unwrap().cwd.to_string() })
+        } else if let Some(fp) = t.windows[0].foreground_processes.iter().find(|fp| {
+            fp.cmdline.iter().any(|cmd| {
+                ["zsh", "bash", "fish", "sh", "nu", "ksh"]
+                    .iter()
+                    .any(|shell| cmd.contains(shell))
+            })
+        }) {
+            i += 1;
+            Some(WindowCWD { id: t.windows[0].id, cwd: fp.cwd.to_string() })
+        } else {
+            None
         }
-        break;
-    }
-    // dbg!(&windows);
+    }).collect::<Vec<_>>();
 
     Package {
-        i_current_window: i_current_window.unwrap(),
-        windows,
+        i_current_window,
+        i_current_window_cwd: i_current_window_cwd.unwrap(),
+        tabs,
+        windows_cwd: tabs_cwd
     }
 }
 
+#[test]
+fn test_kitty_get_windows_package() {
+    assert_eq!(
+        &hash_file("test.txt").unwrap(),
+        "9d3a91ef65132ed9d057ad920599d5c1341dc032ea3f724a64b0f6fabd542e30"
+    );
+
+    let kitty_ls = std::fs::read_to_string("test.txt").unwrap();
+
+    dbg!(kitty_get_windows_package(&kitty_ls));
+}
+
+use sha2::{Digest, Sha256};
+use std::{fs, io};
+
+fn hash_file(path: &str) -> io::Result<String> {
+    let mut file = fs::File::open(path)?;
+    let mut hasher = Sha256::new();
+
+    // Efficiently stream the file into the hasher
+    io::copy(&mut file, &mut hasher)?;
+
+    let hash = hasher.finalize();
+    Ok(format!("{:x}", hash))
+}
+
 #[derive(Debug, Clone)]
-struct WindowA {
+struct WindowCWD {
     id: usize,
     cwd: String,
 }
 
 #[derive(Debug, Clone)]
-struct WindowB {
+struct WindowCWDDiff {
     id: usize,
     dist: usize,
     cwd: String,
@@ -82,7 +128,7 @@ struct WindowB {
 // move window back by dx indices
 fn kitty_get_needed_dx_new_tab_to_right_of_current_tab(
     i_current_window: usize,
-    windows: &[WindowA],
+    windows: &[WindowCWD],
 ) -> usize {
     let window_right = windows.get(i_current_window + 1);
 
@@ -100,11 +146,11 @@ mod test_get_needed_dx_new_tab_to_right_of_current_tab {
     fn test1() {
         let i_current_window = 0;
         let windows = vec![
-            WindowA {
+            WindowCWD {
                 id: 0,
                 cwd: "cargo".into(),
             },
-            WindowA {
+            WindowCWD {
                 id: 1,
                 cwd: "cargo".into(),
             },
@@ -118,19 +164,19 @@ mod test_get_needed_dx_new_tab_to_right_of_current_tab {
     fn test2() {
         let i_current_window = 1;
         let windows = vec![
-            WindowA {
+            WindowCWD {
                 id: 0,
                 cwd: "cargo".into(),
             },
-            WindowA {
+            WindowCWD {
                 id: 1, // <---------
                 cwd: "cargo".into(),
             },
-            WindowA {
+            WindowCWD {
                 id: 2,
                 cwd: "cargo".into(),
             },
-            WindowA {
+            WindowCWD {
                 id: 3,
                 cwd: "cargo".into(),
             },
@@ -143,7 +189,7 @@ mod test_get_needed_dx_new_tab_to_right_of_current_tab {
     #[test]
     fn test3() {
         let i_current_window = 0;
-        let windows = vec![WindowA {
+        let windows = vec![WindowCWD {
             id: 0, // <---------
             cwd: "cargo".into(),
         }];
@@ -156,19 +202,19 @@ mod test_get_needed_dx_new_tab_to_right_of_current_tab {
     fn test_random_id() {
         let i_current_window = 1;
         let windows = vec![
-            WindowA {
+            WindowCWD {
                 id: 99,
                 cwd: "cargo".into(),
             },
-            WindowA {
+            WindowCWD {
                 id: 420, // <---------
                 cwd: "cargo".into(),
             },
-            WindowA {
+            WindowCWD {
                 id: 69,
                 cwd: "cargo".into(),
             },
-            WindowA {
+            WindowCWD {
                 id: 67,
                 cwd: "cargo".into(),
             },
@@ -179,7 +225,10 @@ mod test_get_needed_dx_new_tab_to_right_of_current_tab {
     }
 }
 
-fn kitty_get_id_closest_window_with_cwd(i_current_window: usize, windows: &[WindowA]) -> Option<usize> {
+fn kitty_get_id_closest_window_with_cwd(
+    i_current_window: usize,
+    windows: &[WindowCWD],
+) -> Option<usize> {
     let (current_window_id, current_window_cwd) = {
         let t = &windows[i_current_window];
         (t.id, t.cwd.clone())
@@ -188,7 +237,7 @@ fn kitty_get_id_closest_window_with_cwd(i_current_window: usize, windows: &[Wind
     let windows = windows
         .into_iter()
         .enumerate()
-        .map(|(i, a)| WindowB {
+        .map(|(i, a)| WindowCWDDiff {
             id: a.id,
             cwd: a.cwd.to_string(),
             dist: i.abs_diff(i_current_window),
@@ -242,11 +291,11 @@ mod test_get_id_closest_window_with_cwd {
     fn test1() {
         let i_current_window = 0;
         let windows = vec![
-            WindowA {
+            WindowCWD {
                 id: 0,
                 cwd: "cargo".into(),
             },
-            WindowA {
+            WindowCWD {
                 id: 1,
                 cwd: "cargo".into(),
             },
@@ -260,7 +309,7 @@ mod test_get_id_closest_window_with_cwd {
     #[test]
     fn test2() {
         let i_current_window = 0;
-        let windows = vec![WindowA {
+        let windows = vec![WindowCWD {
             id: 0,
             cwd: "cargo".into(),
         }];
@@ -274,19 +323,19 @@ mod test_get_id_closest_window_with_cwd {
     fn test3() {
         let i_current_window = 1;
         let windows = vec![
-            WindowA {
+            WindowCWD {
                 id: 0,
                 cwd: "cargo".into(),
             },
-            WindowA {
+            WindowCWD {
                 id: 1,
                 cwd: "cargo".into(),
             },
-            WindowA {
+            WindowCWD {
                 id: 2,
                 cwd: "cargo".into(),
             },
-            WindowA {
+            WindowCWD {
                 id: 3,
                 cwd: "cargo".into(),
             },
@@ -301,19 +350,19 @@ mod test_get_id_closest_window_with_cwd {
     fn test4() {
         let i_current_window = 1;
         let windows = vec![
-            WindowA {
+            WindowCWD {
                 id: 0,
                 cwd: "cargo".into(),
             },
-            WindowA {
+            WindowCWD {
                 id: 1,
                 cwd: "cargo".into(),
             },
-            WindowA {
+            WindowCWD {
                 id: 2,
                 cwd: "lol".into(),
             },
-            WindowA {
+            WindowCWD {
                 id: 3,
                 cwd: "cargo".into(),
             },
@@ -328,23 +377,23 @@ mod test_get_id_closest_window_with_cwd {
     fn test5() {
         let i_current_window = 2;
         let windows = vec![
-            WindowA {
+            WindowCWD {
                 id: 0,
                 cwd: "cargo".into(),
             },
-            WindowA {
+            WindowCWD {
                 id: 1,
                 cwd: "lol".into(),
             },
-            WindowA {
+            WindowCWD {
                 id: 2,
                 cwd: "cargo".into(),
             },
-            WindowA {
+            WindowCWD {
                 id: 2,
                 cwd: "lol".into(),
             },
-            WindowA {
+            WindowCWD {
                 id: 3,
                 cwd: "lol".into(),
             },
@@ -384,11 +433,16 @@ fn kitty_new_tab(cwd: &str, dont_take_focus: bool) {
 
 fn kitty_send_cmd(id: isize, cmd: &str) {
     let _ = Command::new("kitty")
-        .args(["@", "send-text", "-m", &format!("id:{id}"), &format!("{cmd}\\r")])
+        .args([
+            "@",
+            "send-text",
+            "-m",
+            &format!("id:{id}"),
+            &format!("{cmd}\\r"),
+        ])
         .output()
         .expect("failed to run cargo");
 }
-
 
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
@@ -404,19 +458,22 @@ struct Flags {
     adjacent: bool,
     /// command, if any, to run in the new tab
     #[arg(short, long)]
-    command: Option<String>
+    command: Option<String>,
 }
 
 fn main() {
-    let package = kitty_get_windows_package();
-    let cwd_current_tab = package.windows[package.i_current_window].cwd.clone();
-    let id_window_current = package.windows[package.i_current_window].id;
+    let kitty_ls = kitty_ls();
+    let package = kitty_get_windows_package(&kitty_ls);
+    let cwd_current_tab = package.windows_cwd[package.i_current_window_cwd]
+        .cwd
+        .clone();
+    let id_window_current = package.windows_cwd[package.i_current_window_cwd].id;
     // dbg!(&package.windows);
 
     let flags = Flags::parse();
 
     let id_window_runner: isize = if let Some(id_window) =
-        kitty_get_id_closest_window_with_cwd(package.i_current_window, &package.windows)
+        kitty_get_id_closest_window_with_cwd(package.i_current_window_cwd, &package.windows_cwd)
     {
         // println!("dont_take_focusing window {id_window_runner}");
         if !flags.dont_take_focus {
@@ -429,9 +486,12 @@ fn main() {
         kitty_new_tab(&cwd_current_tab, flags.dont_take_focus);
         -1 as isize
     };
-    dbg!(&package.windows);
+    dbg!(&package.windows_cwd);
     if flags.adjacent {
-        let dx = kitty_get_needed_dx_new_tab_to_right_of_current_tab(package.i_current_window, &package.windows);
+        let dx = kitty_get_needed_dx_new_tab_to_right_of_current_tab(
+            package.i_current_window_cwd,
+            &package.windows_cwd,
+        );
         kitty_move_focused_back_by(dx);
     }
     // if let Some(cmd) = flags.command {
