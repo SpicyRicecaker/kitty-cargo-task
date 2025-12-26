@@ -127,13 +127,13 @@ struct WindowCWDDiff {
 // create new window
 // move window back by dx indices
 fn kitty_get_needed_dx_new_tab_to_right_of_current_tab(
-    i_current_window: usize,
-    windows: &[WindowCWD],
+    i_current_tab: usize,
+    tabs: &[Tab],
 ) -> usize {
-    let window_right = windows.get(i_current_window + 1);
+    let tab_right = tabs.get(i_current_tab + 1);
 
-    if window_right.is_some() {
-        windows.len() - (i_current_window + 1)
+    if tab_right.is_some() {
+        tabs.len() - (i_current_tab + 1)
     } else {
         0
     }
@@ -144,83 +144,83 @@ mod test_get_needed_dx_new_tab_to_right_of_current_tab {
     use super::*;
     #[test]
     fn test1() {
-        let i_current_window = 0;
-        let windows = vec![
-            WindowCWD {
+        let i_current_tab = 0;
+        let tabs = vec![
+            Tab {
                 id: 0,
-                cwd: "cargo".into(),
+                windows: vec![]
             },
-            WindowCWD {
+            Tab {
                 id: 1,
-                cwd: "cargo".into(),
+                windows: vec![]
             },
         ];
 
-        let dx = kitty_get_needed_dx_new_tab_to_right_of_current_tab(i_current_window, &windows);
+        let dx = kitty_get_needed_dx_new_tab_to_right_of_current_tab(i_current_tab, &tabs);
         assert_eq!(dx, 1);
     }
 
     #[test]
     fn test2() {
-        let i_current_window = 1;
-        let windows = vec![
-            WindowCWD {
+        let i_current_tab = 1;
+        let tabs = vec![
+            Tab {
                 id: 0,
-                cwd: "cargo".into(),
+                windows: vec![]
             },
-            WindowCWD {
+            Tab {
                 id: 1, // <---------
-                cwd: "cargo".into(),
+                windows: vec![]
             },
-            WindowCWD {
+            Tab {
                 id: 2,
-                cwd: "cargo".into(),
+                windows: vec![]
             },
-            WindowCWD {
+            Tab {
                 id: 3,
-                cwd: "cargo".into(),
+                windows: vec![]
             },
         ];
 
-        let dx = kitty_get_needed_dx_new_tab_to_right_of_current_tab(i_current_window, &windows);
+        let dx = kitty_get_needed_dx_new_tab_to_right_of_current_tab(i_current_tab, &tabs);
         assert_eq!(dx, 2);
     }
 
     #[test]
     fn test3() {
-        let i_current_window = 0;
-        let windows = vec![WindowCWD {
+        let i_current_tab = 0;
+        let tabs = vec![Tab {
             id: 0, // <---------
-            cwd: "cargo".into(),
+            windows: vec![]
         }];
 
-        let dx = kitty_get_needed_dx_new_tab_to_right_of_current_tab(i_current_window, &windows);
+        let dx = kitty_get_needed_dx_new_tab_to_right_of_current_tab(i_current_tab, &tabs);
         assert_eq!(dx, 0);
     }
 
     #[test]
     fn test_random_id() {
-        let i_current_window = 1;
-        let windows = vec![
-            WindowCWD {
+        let i_current_tab = 1;
+        let tabs = vec![
+            Tab {
                 id: 99,
-                cwd: "cargo".into(),
+                windows: vec![]
             },
-            WindowCWD {
+            Tab {
                 id: 420, // <---------
-                cwd: "cargo".into(),
+                windows: vec![]
             },
-            WindowCWD {
+            Tab {
                 id: 69,
-                cwd: "cargo".into(),
+                windows: vec![]
             },
-            WindowCWD {
+            Tab {
                 id: 67,
-                cwd: "cargo".into(),
+                windows: vec![]
             },
         ];
 
-        let dx = kitty_get_needed_dx_new_tab_to_right_of_current_tab(i_current_window, &windows);
+        let dx = kitty_get_needed_dx_new_tab_to_right_of_current_tab(i_current_tab, &tabs);
         assert_eq!(dx, 2);
     }
 }
@@ -489,8 +489,8 @@ fn main() {
     dbg!(&package.windows_cwd);
     if flags.adjacent {
         let dx = kitty_get_needed_dx_new_tab_to_right_of_current_tab(
-            package.i_current_window_cwd,
-            &package.windows_cwd,
+            package.i_current_window,
+            &package.tabs,
         );
         kitty_move_focused_back_by(dx);
     }
